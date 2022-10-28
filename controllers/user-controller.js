@@ -41,4 +41,44 @@ const userController = {
             res.status(400).json(error);
         });
     },
-}
+
+    // create a brand new user
+    createUser({ body }, res) {
+        User.create(body)
+        .then(dbUserData => res.json(dbUserData))
+        .catch(error => res.status(400).json(error));
+    },
+
+    // update a specific user by seraching with their id 
+    updateUser({ params, body }, res) {
+        //will need to run validators to assure that the specific id in question 
+        // is the one being updated
+        User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })  
+        .then(dbUserData => {
+            if (!dbUserData) {
+            res.status(404).json({ message: 'No user found under this id' });
+            return;
+            }
+            res.json(dbUserData);
+        })
+        .catch(error => res.status(400).json(error));
+    },
+
+    // delete a specific User by id 
+    deleteUser({ params }, res) {
+        User.findOneAndDelete({ _id: params.id })
+        .then(dbUserData => {
+            if (!dbUserData) {
+            res.status(404).json({ message: 'No user found under this id' });
+            return;
+            }
+            // we have to make sure that we delete that specific users thoughts 
+            // as well as the user itself
+            return Thought.deleteMany({ _id: { $in: dbUserData.thoughts } });
+        })
+        .then(() => {
+            res.json({ message: 'The user has been deleted' });
+        })
+        .catch(error => res.status(400).json(error));
+    }
+};
