@@ -80,5 +80,36 @@ const userController = {
             res.json({ message: 'The user has been deleted' });
         })
         .catch(error => res.status(400).json(error));
+    },
+
+    // for adding friend the directory will be api/users/:userId/friends/:friendId
+    // we will use this to make your the specific friend id is linked to that user id
+    addNewFriend({ params }, res) {
+        User.findOneAndUpdate(
+            { _id: params.id },
+            { $push: { friends: params. friendId } },
+            { new: true }
+        )
+        .then(dbUserData => {
+            if (!dbUserData) {
+                res.status(404).json({ message: 'No user found under this id'});
+                return;
+            }
+            res.json(dbUserData);
+        })
+        .catch(error => res.json(error));
+    },
+
+    // delete a friend
+    deleteFriend({ params }, res) {
+        User.findOneAndUpdate(
+            { _id: params.id },
+            { $pull: { friends: params. friendId } },
+            { new: true }
+        )
+        .then(dbUserData => res.json(dbUserData))
+        .catch(error => res.json(error));
     }
 };
+
+module.exports = userController;
