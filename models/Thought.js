@@ -1,4 +1,5 @@
 const { Schema, model, Types } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 //  schema for thoughts
 const ThoughtSchema = new Schema(
