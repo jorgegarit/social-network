@@ -13,7 +13,7 @@ const thoughtController = {
 
     // get one thought using the thoughtId
     getThoughtById({ params }, res) {
-        Thought.findOne({ _id: params.id })
+        Thought.findOne({ _id: params.thoughtId })
         .populate({
             path: 'reactions',
             select: '-__v'
@@ -35,10 +35,10 @@ const thoughtController = {
     // create a new thought that will be paired with user id 
     addThought({ params, body }, res) {
         Thought.create(body)
-        .then(({ _id }) => {
+        .then(dbThoughtData => {
             return User.findOneAndUpdate(
-              { _id: params.userId },
-              { $push: { thoughts: _id } },
+              { _id: body.userId },
+              { $push: { thoughts: dbThoughtData._id } },
               { new: true }
             );
           })

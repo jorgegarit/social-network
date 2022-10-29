@@ -28,7 +28,7 @@ router
 //  routes relating to friends
 router
   .route('/:id/friends/:friendId')
-  .put(addNewFriend)
+  .post(addNewFriend)
   .delete(deleteFriend);
 
 // exports user routes
